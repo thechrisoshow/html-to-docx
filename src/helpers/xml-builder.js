@@ -1431,6 +1431,16 @@ const buildTableRowProperties = (attributes) => {
             delete attributes.rowCantSplit;
           }
           break;
+        case 'repeatTableHeader':
+          if (attributes.repeatTableHeader) {
+            const headerFragment = fragment({ namespaceAlias: { w: namespaces.w } })
+              .ele('@w', 'tblHeader')
+              .up();
+            tableRowPropertiesFragment.import(headerFragment);
+            // eslint-disable-next-line no-param-reassign
+            delete attributes.repeatTableHeader;
+          }
+          break;
       }
     });
   }
@@ -1791,9 +1801,10 @@ const buildTable = async (vNode, attributes, docxDocumentInstance) => {
               );
               tableFragment.import(tableGridFragment);
             }
+            // Add repeatTableHeader attribute for thead rows
             const tableRowFragment = await buildTableRow(
               grandChildVNode,
-              modifiedAttributes,
+              { ...modifiedAttributes, repeatTableHeader: true },
               rowSpanMap,
               docxDocumentInstance
             );
